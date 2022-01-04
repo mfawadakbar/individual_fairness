@@ -676,7 +676,7 @@ if __name__ == "__main__":
         roc_shape = np.shape(ROC_all)
         print(f"Shape of ROC_all is: {roc_shape}")
         np.savetxt(
-            f"dataframes/ROC_all_{dataset_name}.txt",
+            f"dataframes/ROC_all_{dataset_name}_{str(model)}.txt",
             np.array(ROC_all).reshape(-1, roc_shape[1] * roc_shape[2]),
         )
 
