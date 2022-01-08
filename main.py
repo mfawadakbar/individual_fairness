@@ -2,11 +2,9 @@ import numpy as np
 import pandas as pd
 import gc
 
-
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import train_test_split
 from scipy.spatial import distance
-
 
 import torch
 import torch.optim as optim
@@ -14,6 +12,7 @@ import torch.nn.functional as F
 import torch.nn as nn
 import pickle
 
+from AUC_utility import AUC_util, AUC_plot
 from ROC_fair import consistency
 from utilities import (
     print_sensitive_attr,
@@ -71,7 +70,15 @@ if __name__ == "__main__":
     INPUT_SHAPE = X_train.shape[1]
     print(f"Input Shape is: {INPUT_SHAPE}")
     models = [Net, Net1, Net2, Net3]
-
+    fprs = []
+    tprs = []
+    models_dic = {
+        "5-Layers": "Net",
+        "4-Layers": "Net_Net1",
+        "3-Layers": "Net_Net1_Net2",
+        "2-Layers": "Net_Net1_Net2_Net3",
+    }
+    LAYER = list(models_dic.keys())
     for model in models:
         ROC_all = []
         net = model(INPUT_SHAPE, OUTPUT_SIZE)
@@ -89,6 +96,8 @@ if __name__ == "__main__":
             INPUT_SHAPE, net, X_train, y_train, "Training Set"
         )
         test_output = model_performance(INPUT_SHAPE, net, X_test, y_test, "Test Set")
+        AUC_util(net, X_test, y_test, INPUT_SHAPE, fprs, tprs)
+
         file = open(f"dataframes/Performance/Performance_{dataset_name}.txt", "a+")
         file.writelines(train_output)
         file.writelines(test_output)
@@ -119,6 +128,18 @@ if __name__ == "__main__":
             f"dataframes/ROC/ROC_all_{dataset_name}.txt",
             np.array(ROC_all).reshape(-1, roc_shape[1] * roc_shape[2]),
         )
-
-        # plot_roc(ROC_all, dataset_name, roc_shape, alphas)
+    fprs_shape = np.shape(fprs)
+    tprs_shape = np.shape(tprs)
+    np.savetxt(
+        f"dataframes/AUC/fprs_{dataset_name[:-19]}.txt",
+        fprs,
+        fmt="%s",  # .reshape(-1, fprs_shape[1] * fprs_shape[2]),
+    )
+    np.savetxt(
+        f"dataframes/AUC/tprs_{dataset_name[:-19]}.txt",
+        tprs,
+        fmt="%s",  # .reshape(-1, tprs_shape[1] * tprs_shape[2]),
+    )
+    AUC_plot(fprs, tprs, LAYER, dataset_name[:-19].capitalize())
+    # plot_roc(ROC_all, dataset_name, roc_shape, alphas)
 
