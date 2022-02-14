@@ -10,4 +10,4 @@ final classification outcome and is not dependent on a cut-off threshold like th
 </i>
 
 
-**Copyright (C) 2019 Some company**
+**Copyright (C) 2019 DSA Lab, Computer Science, Utah State University**
