@@ -1,4 +1,4 @@
-# individual_fairness
+# Individual Fairness Evaluation Metric for Probablistic Classifiers
 This repository is linked to a manuscript submitted to 5th AAAI/ACM Conference on AI, Ethics, and Society.
 
 Paper Title: "PCIndFair: A New Framework to Assess the Individual Fairness of Probabilistic Classifiers"
